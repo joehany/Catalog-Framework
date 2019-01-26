@@ -7,11 +7,11 @@ import java.util.List;
 public interface Store {
     public void save(String tableName, Model data);
 
-    public void remove(String id);
+    public void remove(String tableName, String id);
 
-    public void removeAll(String keyword);
+    public void removeAll(String tableName, String keyword);
 
-    public Model find(String id);
+    public Model findOne(String tableName, String id);
 
-    public List<Model> findAll(String keyword);
+    public List<Model> findAll(String tableName, String keyword);
 }

@@ -5,8 +5,9 @@ import application.Models.Model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class MemoryStore implements Store{
+public class MemoryStore implements Store {
     protected Map<String, HashMap<String, Model>> storage = new HashMap<String, HashMap<String, Model>>();
 
 
@@ -16,27 +17,36 @@ public class MemoryStore implements Store{
     }
 
     @Override
-    public void remove(String id) {
-
+    public void remove(String tableName, String id) {
+        ensureTable(tableName).remove(id);
     }
 
     @Override
-    public void removeAll(String keyword) {
+    public void removeAll(String tableName, String keyword) {
+        Map<String, Model> table = ensureTable(tableName);
 
+        table.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(keyword))
+                .forEach(entry -> table.remove(entry.getKey()));
     }
 
     @Override
-    public Model find(String id) {
-        return null;
+    public Model findOne(String tableName, String id) {
+        return ensureTable(tableName).get(id);
     }
 
     @Override
-    public List<Model> findAll(String keyword) {
-        return null;
+    public List<Model> findAll(String tableName, String keyword) {
+        Map<String, Model> table = ensureTable(tableName);
+
+        return table.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(keyword))
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList());
     }
 
-    public Map<String, Model> ensureTable(String tableName){
-        if (storage.containsKey(tableName)){
+    public Map<String, Model> ensureTable(String tableName) {
+        if (storage.containsKey(tableName)) {
             return storage.get(tableName);
         } else {
             HashMap<String, Model> table = new HashMap<>();
